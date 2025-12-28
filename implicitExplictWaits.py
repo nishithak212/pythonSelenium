@@ -16,7 +16,8 @@ driver.implicitly_wait(5)
 
 driver.get("https://rahulshettyacademy.com/seleniumPractise/#/")
 driver.find_element(By.CSS_SELECTOR,".search-keyword").send_keys("ber")
-time.sleep(2)
+#Exception for Implicit wait: Implict wait will not wait for find_elements that returns list[]. Therefore, in such cases, we used sleep after the search step
+time.sleep(2) 
 
 #Add all the products to the cart that show up on the page when "ber" is given in search bar. This needs to be handled dynamically as producst can be added or removed from the website in real time
 products = driver.find_elements(By.XPATH,"//div[@class='products']/div")
