@@ -6,6 +6,10 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+#List to compare if displayed products in run time match products defined in expectedProductsList ((Excercise 1))
+expectedProductsList = ["Cucumber - 1 Kg", "Raspberry - 1/4 Kg", "Strawberry - 1/4 Kg"]
+actualProductsList = [] # empty list to store values of products in run time
+
 service_obj = Service("C:/Users/nishi/Documents/chromedriver-win64/chromedriver-win64/chromedriver.exe")
 driver=webdriver.Chrome(service=service_obj)
 
@@ -21,6 +25,9 @@ driver.find_element(By.CSS_SELECTOR,".search-keyword").send_keys("ber")
 #Exception for Implicit wait: Implict wait will not wait for find_elements that returns list[]. Therefore, in such cases, we used sleep after the search step
 time.sleep(2) 
 
+
+
+
 #Add all the products to the cart that show up on the page when "ber" is given in search bar. This needs to be handled dynamically as producst can be added or removed from the website in real time
 products = driver.find_elements(By.XPATH,"//div[@class='products']/div")
 count = len(products)
@@ -29,7 +36,10 @@ assert count > 0
 
 #To have an entire access of products in the displayed list. This is called chaining of web elements
 for product in products:
+    actualProductsList.append(product.find_element(By.XPATH,"h4").text) #Collecting product names so that we can match with the expected product list
     product.find_element(By.XPATH,"div/button").click()
+
+assert expectedProductsList == actualProductsList
 
 #Click on the cart
 driver.find_element(By.CSS_SELECTOR,"img[alt='Cart']").click()
@@ -45,9 +55,9 @@ driver.find_element(By.XPATH,"//button[text()='PROCEED TO CHECKOUT']").click()
 prices = driver.find_elements(By.CSS_SELECTOR,"tr td:nth-child(5) p") #-- To go to the 5th column in the table using CSS Selector
 sum=0
 for price in prices:
-    sum = sum + int(price.text) #price is in string format, therefore converting it to int and performing addition
+    sum = sum + float(price.text) #price is in string format, therefore converting it to int and performing addition
 print(sum)
-totalAmount = int(driver.find_element(By.CSS_SELECTOR,".totAmt").text) #totAmt is in string format, therefore converting it into int for comparison with price which is in int 
+totalAmount = float(driver.find_element(By.CSS_SELECTOR,".totAmt").text) #totAmt is in string format, therefore converting it into int for comparison with price which is in int 
 
 assert sum == totalAmount
 
@@ -67,6 +77,9 @@ promoCodeApplied =  driver.find_element(By.CLASS_NAME,"promoInfo")
 assert promoCodeApplied.text == "Code applied ..!"
 print(promoCodeApplied.text)
 
+#Below is an assertion to check Total After Discount value is less than Total Amount as discount is applied (Excercise 1)
+discountedAmount = float((driver.find_element(By.XPATH,"//span[@class='discountAmt']").text))
+assert discountedAmount < totalAmount
 
 
 time.sleep(2)
