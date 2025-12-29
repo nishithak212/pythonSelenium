@@ -38,7 +38,19 @@ driver.find_element(By.CSS_SELECTOR,"img[alt='Cart']").click()
 driver.find_element(By.XPATH,"//button[text()='PROCEED TO CHECKOUT']").click()
 
 #But as there is some wait for the system to load and display the text we need to apply sleep
-#time.sleep(3)
+#time.sleep(3) -- #This sleep is no more needed as we are using implicit wait which is global
+
+#Sum Validation after checkout
+#driver.find_element(By.XPATH,"//tr/td[5]") # -- To go to the 5th column in the table using XPATH
+prices = driver.find_elements(By.CSS_SELECTOR,"tr td:nth-child(5) p") #-- To go to the 5th column in the table using CSS Selector
+sum=0
+for price in prices:
+    sum = sum + int(price.text) #price is in string format, therefore converting it to int and performing addition
+print(sum)
+totalAmount = int(driver.find_element(By.CSS_SELECTOR,".totAmt").text) #totAmt is in string format, therefore converting it into int for comparison with price which is in int 
+
+assert sum == totalAmount
+
 
 #Apply promo code and click apply
 driver.find_element(By.CSS_SELECTOR,"input[class='promoCode']").send_keys("rahulshettyacademy")
