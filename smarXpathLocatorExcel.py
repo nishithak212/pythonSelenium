@@ -3,6 +3,30 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import openpyxl
+
+def update_excel_data(file_path, searchTerm, colName, new_value): #Creating  a method to update excel data
+    #Location of excel file
+    book = openpyxl.load_workbook("C:\\Users\\nishi\\PycharmProjects\\PythonTesting\\pythonSelenium\\excelFiles\\pythonExcelDemo.xlsx")
+    sheet = book.active #to get control of active excel sheet
+    dict = {} #empty dictionary
+
+    for i in range(1,sheet.max_column+1):
+        if sheet.cell(row=1,column=i).value == colName:
+            dict["col"] = i
+
+    for i in range(1,sheet.max_row+1):
+        for j in range(1,sheet.max_column+1):
+            if sheet.cell(row=i,column=j).value == searchTerm :
+                dict["row"] = i
+
+    #edit the excel with updated file
+    sheet.cell(row=dict["row"], column=dict["col"]).value= new_value
+
+#save the excel
+    book.save(file_path)
+
+
 
 file_path = "C:/Users/nishi/PycharmProjects/PythonTesting/pythonSelenium/excelFiles/download.xlsx"
 fruit_name = "Apple"
@@ -16,7 +40,7 @@ driver.get("https://rahulshettyacademy.com/upload-download-test/index.html")
 #download excel file
 driver.find_element(By.ID,"downloadButton").click()
 
-#edit the excel with updated file
+
 
 #upload excel file
 file_input = driver.find_element(By.CSS_SELECTOR,"input[type='file']")
